@@ -1,0 +1,21 @@
+# Status Codes
+200 - Request processed
+201 - Resources created
+400 - Data not found from req body/params/query
+401 - Something went wrong
+404 - Resources not found
+500 - Internal Server error
+
+# Template
+try {
+    return res.status(201).send({
+        message : ' succesfully',
+        success :true
+    })
+} catch (error) {
+    console.log(error)
+    res.status(500).send({
+        message : 'Internal Server Error',
+        success : false
+    })
+}
