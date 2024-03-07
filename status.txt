@@ -4,6 +4,7 @@
 400 - Data not found from req body/params/query
 401 - Something went wrong
 404 - Resources not found
+409 - Resourse exists
 500 - Internal Server error
 
 # Template

@@ -1,8 +1,9 @@
-import express from 'express'
-import CourseModel from '../models/CourseModel.js'
+import express from "express";
+// import CourseModel from '../models/CourseModel.js'
 // import StudentModel from '../models/StudentModel.js'
+import { signUp, logIn } from "../controllers/studentCtrl.js";
 
-const router = express.Router()
+const router = express.Router();
 // router.get('/test', (req, res) => {
 //     try {
 //         res.send({
@@ -58,7 +59,7 @@ const router = express.Router()
 //         const { studentId } = req.params
 //         const student = await StudentModel.findOne({user_id:studentId}).populate('enrolledIn')
 //         const enrolledCourses = student.enrolledIn
-        
+
 //         return res.status(201).send({
 //             message: 'Enrolled courses fetched succesfully',
 //             data: enrolledCourses,
@@ -72,5 +73,7 @@ const router = express.Router()
 //         })
 //     }
 // })
+router.post("/sign-up", signUp);
+router.post("/log-in", logIn);
 
-export default router
+export default router;

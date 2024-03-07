@@ -18,6 +18,7 @@ import PublisherAbout from "./Pages/Publisher/About";
 import PublisherCourse from "./Pages/Publisher/Courses";
 import PublisherLogin from "./Pages/Publisher/Login";
 import PublisherSignUp from "./Pages/Publisher/SignUp";
+import ManageCourse from "./Pages/Publisher/ManageCourse";
 
 import NotFound from "./Pages/Common/NotFound";
 import UnAuthorized from "./Pages/Common/UnAuthorized";
@@ -25,6 +26,7 @@ import UnAuthorized from "./Pages/Common/UnAuthorized";
 import RequireAuth from "./Routes/RequireAuth";
 import WatchCoursesAcademey from "./Pages/Academy/WatchCourses";
 import WatchCoursesPublisher from "./Pages/Publisher/WatchCourses";
+import GetAuth from "./Routes/GetAuth";
 
 function App() {
   return (
@@ -46,15 +48,19 @@ function App() {
           <Route path="watchcourses" element={<WatchCoursesAcademey />} />
         </Route>
       </Route>
-      <Route path="/publisher" element={<PublisherLayout />}>
-        <Route path=":publisherId" element={<PublisherHome />} />
-        <Route path=":publisherId/about" element={<PublisherAbout />} />
-        <Route path=":publisherId/log-in" element={<PublisherLogin />} />
-        <Route path=":publisherId/sign-up" element={<PublisherSignUp />} />
-        {/* Protected */}
-        <Route element={<RequireAuth />}>
-          <Route path="watchcourses" element={<WatchCoursesPublisher />} />
+      <Route path="/publisher" element={<GetAuth />}>
+        <Route path="" element={<PublisherLayout />}>
+          <Route path=":publisherId" element={<PublisherHome />} />
+          <Route path=":publisherId/about" element={<PublisherAbout />} />
+          <Route path=":publisherId/log-in" element={<PublisherLogin />} />
+          <Route path=":publisherId/sign-up" element={<PublisherSignUp />} />
           <Route path=":publisherId/courses" element={<PublisherCourse />} />
+          {/* Protected */}
+          <Route path="/publisher/:publisherId" element={<RequireAuth />}>
+            <Route path="watchcourses" element={<WatchCoursesPublisher />} />
+            <Route path="editcourse" element={<ManageCourse />} />
+          </Route>
+          <Route path=":publisherId/*" element={<h1 >Not found</h1>} />
         </Route>
       </Route>
       <Route path="*" element={<NotFound />} />

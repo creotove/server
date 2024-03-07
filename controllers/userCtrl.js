@@ -4,6 +4,7 @@ import StudentModel from "../models/newModels/StudentsModel.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+import CoursesModel from "../models/newModels/CoursesModel.js";
 
 const getMyprofile = asyncHandler(async (req, res) => {
   const { email, role, id } = req.body;
@@ -27,10 +28,48 @@ const getMyprofile = asyncHandler(async (req, res) => {
   }
 });
 const getAuthenticatedUser = asyncHandler(async (req, res) => {
-  const { id, email, role } = req.body;
-  if (!email || !role || !id) throw new ApiError(401, "Unauthorized Request");
+  const { id } = req.body;
+  console.log("auth called");
+
   const user = await UsersModel.findById(id).select("-password");
   if (!user) throw new ApiError(404, "User not found");
-  res.status(200).send(new ApiResponse(200, user, "user is authenticated"));
+
+  res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        user,
+      },
+      "Authorized user fetched"
+    )
+  );
 });
-export { getMyprofile, getAuthenticatedUser };
+const getLoggedInUser =asyncHandler(async(req,res)=>{
+  const { id } = req.body;
+  console.log("auth called");
+
+  const user = await StudentModel.findById(id).select("-password");
+  if (!user) throw new ApiError(404, "User not found");
+
+  res.status(200).json(
+    new ApiResponse(
+      200,
+      {
+        user,
+      },
+      "Authorized user fetched"
+    )
+  );
+})
+const getPublisherCourses = asyncHandler(async (req, res) => {
+  const { publisherId } = req.params;
+  console.log(publisherId)
+
+  const courses = await CoursesModel.find({
+    createdBy: publisherId,
+  });
+  if (!courses) return res.status(404).json(new ApiResponse(404, {}, "No courses found"))
+  return res.status(200).json(new ApiResponse(200, courses, "Courses found!"));
+});
+
+export { getMyprofile, getAuthenticatedUser, getPublisherCourses,getLoggedInUser };

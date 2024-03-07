@@ -1,97 +1,16 @@
 import express from "express";
-// import CourseModel from "../models/CourseModel.js";
-// import StudentModel from "../models/StudentModel.js";
-// import UserModel from "../models/UserModel.js";
-// import TeacherModel from "../models/TeacherModel.js";
-// import bcryptjs from "bcryptjs";
-// import jwt from "jsonwebtoken";
+import { getAuthenticatedUser,getPublisherCourses,getLoggedInUser } from "../controllers/userCtrl.js";
 import { auth } from "../middlewares/auth.js";
-import {getMyprofile,getAuthenticatedUser} from '../controllers/userCtrl.js'
+
+// import {getMyprofile} from '../controllers/userCtrl.js'
 
 const router = express.Router();
 
+router.post("/get-authenticated-user", auth, getAuthenticatedUser);
+router.post("/get-logged-in-user", auth, getLoggedInUser);
+router.get('/get-publisher-courses/:publisherId',getPublisherCourses)
 
-router.post('/getAuthUser',auth,getAuthenticatedUser)
-// // get profile
-// router.get("/profile", async (req, res) => {
-//   try {
-//     const { userId } = req.query;
-//     const user = await UserModel.findById(userId);
-//     if (!user) {
-//       return res.status(404).send({
-//         message: "User not found",
-//         success: false,
-//       });
-//     }
-//     return res.status(201).send({
-//       message: "Profile fetched succesfully",
-//       data: user,
-//       success: true,
-//     });
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).send({
-//       message: error?.message || "Internal Server Error",
-//       success: false,
-//     });
-//   }
-// });
-// // login
-// router.post("/login", async (req, res) => {
-//   try {
-//     const { email, password } = req.body;
-//     if (!email) {
-//       return res.status(400).send({
-//         success: false,
-//         message: "Email is required",
-//       });
-//     }
-//     if (!password) {
-//       return res.status(400).send({
-//         success: false,
-//         message: "Password is required",
-//       });
-//     }
 
-//     const user = await UserModel.findOne({ email });
-//     if (!user) {
-//       return res.status(200).send({
-//         success: false,
-//         message: "No user found with this email",
-//       });
-//     }
-
-//     const isMatch = await bcryptjs.compare(password, user.password);
-//     if (!isMatch) {
-//       return res.status(400).send({
-//         success: false,
-//         message: "Invalid credentials",
-//       });
-//     }
-
-//     const token = jwt.sign(
-//       { id: user._id, email: user.email, role: user.role },
-//       process.env.JWT_SECRET,
-//       {
-//         expiresIn: "1d",
-//       }
-//     );
-//     const responseUser = await UserModel.findOne({ email }).select('-password');
-//     return res.status(200).send({
-//       success: true,
-//       message: "Logged In successfully",
-//       token,
-//       role: user.role,
-//       user: responseUser,
-//     });
-//   } catch (error) {
-//     console.log(error);
-//     res.status(500).send({
-//       message: "Internal Server Error",
-//       success: false,
-//     });
-//   }
-// });
 // // update profile
 // router.patch("/update", async (req, res) => {
 //   try {

@@ -13,10 +13,12 @@ import cookieParser from "cookie-parser";
 connectDB();
 const app = express();
 
-app.use(express.json());
+app.use(express.json({  extended: true }));
+app.use(express.urlencoded({  extended: true }));
 app.use(morgan("dev"));
 app.use(cors());
 app.use(cookieParser());
+
 
 app.use("/admin", adminRoutes);
 app.use("/student", studentRoutes);

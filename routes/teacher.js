@@ -1,5 +1,5 @@
 import express from "express";
-import CourseModel from "../models/CourseModel.js";
+// import CourseModel from "../models/CourseModel.js";
 import TeacherModel from "../models/TeacherModel.js";
 // import UserModel from "../models/UserModel.js";
 import { upload } from "../middlewares/multer.js";

@@ -7,7 +7,7 @@ const Navbar = () => {
       <NavLink style={{marginRight: '50px'}} to={"/"}>Home</NavLink>
       <NavLink style={{marginRight: '50px'}} to={"/about"}>About</NavLink>
       <NavLink style={{marginRight: '50px'}} to={"/sign-up"}>Sign up</NavLink>
-      <NavLink style={{marginRight: '50px'}} to={"/log-in"}>login up</NavLink>
+      <NavLink style={{marginRight: '50px'}} to={"/log-in"}>login in</NavLink>
     </div>
   );
 };
