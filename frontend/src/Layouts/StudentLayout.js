@@ -1,17 +1,17 @@
 import React from "react";
-import Navbar from "../Components/Student/Navbar";
+import Navbar from "../Components/Student/Navbar.js";
 import { Outlet } from "react-router-dom";
 
 const StudentLayout = () => {
   return (
-    <>
+    <section className=''>
       <nav>
         <Navbar />
       </nav>
-      <main>
+      <main className="">
         <Outlet />
       </main>
-    </>
+    </section>
   );
 };
 

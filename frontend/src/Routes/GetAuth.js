@@ -42,7 +42,7 @@ const GetAuth = () => {
   useEffect(() => {
     if (!user) getLoggedInUser();
   }, [user]);
-  return loading ? <p>loading....</p> : <Outlet />;
+  return loading ? <p>loading....</p> : <Outlet />  ;
 };
 
 export default GetAuth;

@@ -32,7 +32,7 @@ const Login = () => {
       };
       const res = await axios.post("/student/log-in", data);
       if (res.data.success) {
-        navigate(`/publisher/${publisherId}`);
+        navigate(`/student/${publisherId}`);
         const user = res?.data?.user;
         const role = res?.data?.user?.role || "STUDENT";
         const data = {
@@ -54,7 +54,8 @@ const Login = () => {
       } else if (error.response?.status === 400) {
         setMessage("Please fill all the details");
       } else {
-        setMessage("Login failed");
+        setMessage(error?.response?.data?.message)
+        // setMessage(error?.response.message);
       }
       localStorage.clear();
     } finally {

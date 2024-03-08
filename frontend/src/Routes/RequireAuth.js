@@ -24,7 +24,7 @@ const RequireAuth = () => {
       );
       if (res.data.success) {
         const user = res?.data?.data?.user;
-        const role = res?.data?.data?.user?.role;
+        const role = res?.data?.data?.user?.role || "STUDENT";
         const data = {
           user,
           role,
@@ -35,7 +35,7 @@ const RequireAuth = () => {
         if (from === "publisher" && res?.data?.user.role === "PUBLISHER") {
           navigate("/log-in");
         } else if (from === "publisher" && res?.data?.user.role === "STUDENT")
-          navigate(`/publisher/${publisherId}/log-in`);
+          navigate(`/student/${publisherId}/log-in`);
       }
     } catch (error) {
       console.log(error);
@@ -46,26 +46,29 @@ const RequireAuth = () => {
   useEffect(() => {
     getAuthenticateUser();
   }, []);
-  return loading ? (
-    <p>loading....</p>
-  ) : auth?.user !== null ? (
-    <Outlet />
-  ) : from === "publisher" && auth?.role === "PUBLISHER" ? (
-    <Navigate to="/log-in" state={{ from: location.pathname }} replace />
-  ) : from === "publisher" ? (
-    <Navigate
-      to={`/publisher/${publisherId}/log-in`}
-      state={{ from: location.pathname }}
-      replace
-    />
-  ) : from === "academy" ? (
-    <Navigate
-      to="/academy/log-in"
-      state={{ from: location.pathname }}
-      replace
-    />
-  ) : (
-    <Navigate to="/log-in" state={{ from: location.pathname }} replace />
+  return (
+    <>
+      {loading && <p>loading....</p>}
+      {auth?.user !== null ? (
+        <Outlet />
+      ) : from === "publisher" && auth?.role === "PUBLISHER" ? (
+        <Navigate to="/log-in" state={{ from: location.pathname }} replace />
+      ) : from === "publisher" ? (
+        <Navigate
+          to={`/student/${publisherId}/log-in`}
+          state={{ from: location.pathname }}
+          replace
+        />
+      ) : from === "academy" ? (
+        <Navigate
+          to="/academy/log-in"
+          state={{ from: location.pathname }}
+          replace
+        />
+      ) : (
+        <Navigate to="/log-in" state={{ from: location.pathname }} replace />
+      )}
+    </>
   );
 };
 

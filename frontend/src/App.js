@@ -20,6 +20,9 @@ import PublisherLogin from "./Pages/Publisher/Login";
 import PublisherSignUp from "./Pages/Publisher/SignUp";
 import ManageCourse from "./Pages/Publisher/ManageCourse";
 
+import StudentLayout from "./Layouts/StudentLayout";
+import StudentHome from "./Pages/Common/Home";
+
 import NotFound from "./Pages/Common/NotFound";
 import UnAuthorized from "./Pages/Common/UnAuthorized";
 
@@ -27,6 +30,8 @@ import RequireAuth from "./Routes/RequireAuth";
 import WatchCoursesAcademey from "./Pages/Academy/WatchCourses";
 import WatchCoursesPublisher from "./Pages/Publisher/WatchCourses";
 import GetAuth from "./Routes/GetAuth";
+import BuildWebsite from "./Pages/Publisher/BuildWebsite";
+import BuilderLayout from "./Layouts/BuilderLayout";
 
 function App() {
   return (
@@ -50,17 +55,38 @@ function App() {
       </Route>
       <Route path="/publisher" element={<GetAuth />}>
         <Route path="" element={<PublisherLayout />}>
-          <Route path=":publisherId" element={<PublisherHome />} />
+          {/* Protected */}
+          <Route path="/publisher/:publisherId" element={<RequireAuth />}>
+            <Route path=":publisherId" element={<PublisherHome />} />
+            <Route path="about" element={<PublisherAbout />} />
+            <Route path="courses" element={<PublisherCourse />} />
+            <Route path="editcourse" element={<ManageCourse />} />
+          </Route>
+          <Route path=":publisherId/*" element={<h1>Not found</h1>} />
+        </Route>
+        <Route element={<BuilderLayout />}>
+          <Route
+            path=":publisherId/build-website/edit"
+            element={<BuildWebsite />}
+          />
+          <Route
+            path=":publisherId/build-website/preview"
+            element={<BuildWebsite />}
+          />
+        </Route>
+      </Route>
+      <Route path="/student" element={<GetAuth />}>
+        <Route path="" element={<StudentLayout />}>
+          <Route path=":publisherId" element={<StudentHome />} />
           <Route path=":publisherId/about" element={<PublisherAbout />} />
           <Route path=":publisherId/log-in" element={<PublisherLogin />} />
           <Route path=":publisherId/sign-up" element={<PublisherSignUp />} />
           <Route path=":publisherId/courses" element={<PublisherCourse />} />
           {/* Protected */}
-          <Route path="/publisher/:publisherId" element={<RequireAuth />}>
+          <Route path=":publisherId" element={<RequireAuth />}>
             <Route path="watchcourses" element={<WatchCoursesPublisher />} />
-            <Route path="editcourse" element={<ManageCourse />} />
           </Route>
-          <Route path=":publisherId/*" element={<h1 >Not found</h1>} />
+          <Route path=":publisherId/*" element={<h1>Not found</h1>} />
         </Route>
       </Route>
       <Route path="*" element={<NotFound />} />

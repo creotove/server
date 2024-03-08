@@ -4,14 +4,14 @@ import { Outlet } from "react-router-dom";
 
 const PublisherLayout = () => {
   return (
-    <>
+    <main className="d-flex">
       <nav>
         <Navbar />
       </nav>
-      <main>
+      <section className="w-100 bg-tertiary bg-dark text-white p-5 ">
         <Outlet />
-      </main>
-    </>
+      </section>
+    </main>
   );
 };
 

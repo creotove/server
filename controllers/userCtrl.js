@@ -32,44 +32,60 @@ const getAuthenticatedUser = asyncHandler(async (req, res) => {
   console.log("auth called");
 
   const user = await UsersModel.findById(id).select("-password");
-  if (!user) throw new ApiError(404, "User not found");
-
-  res.status(200).json(
-    new ApiResponse(
-      200,
-      {
-        user,
-      },
-      "Authorized user fetched"
-    )
-  );
+  const student = await StudentModel.findById(id).select("-password");
+  if (!user && !student) throw new ApiError(404, "User not found");
+  if (student) {
+    return res.status(200).json(
+      new ApiResponse(
+        200,
+        {
+          student,
+        },
+        "Authorized Student fetched"
+      )
+    );
+  }
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { user }, "Authorized User fetched"));
 });
-const getLoggedInUser =asyncHandler(async(req,res)=>{
+const getLoggedInUser = asyncHandler(async (req, res) => {
   const { id } = req.body;
-  console.log("auth called");
 
-  const user = await StudentModel.findById(id).select("-password");
-  if (!user) throw new ApiError(404, "User not found");
+  const student = await StudentModel.findById(id).select("-password");
+  const user = await UsersModel.findById(id).select("-password");
+  if (!student && !user) throw new ApiError(404, "User not found");
 
-  res.status(200).json(
-    new ApiResponse(
-      200,
-      {
-        user,
-      },
-      "Authorized user fetched"
-    )
-  );
-})
+  if (student) {
+    return res.status(200).json(
+      new ApiResponse(
+        200,
+        {
+          student,
+        },
+        "Authorized Student fetched"
+      )
+    );
+  }
+  return res
+    .status(200)
+    .json(new ApiResponse(200, { user }, "Authorized User fetched"));
+});
 const getPublisherCourses = asyncHandler(async (req, res) => {
   const { publisherId } = req.params;
-  console.log(publisherId)
+  console.log(publisherId);
 
   const courses = await CoursesModel.find({
     createdBy: publisherId,
   });
-  if (!courses) return res.status(404).json(new ApiResponse(404, {}, "No courses found"))
+  if (!courses)
+    return res.status(404).json(new ApiResponse(404, {}, "No courses found"));
   return res.status(200).json(new ApiResponse(200, courses, "Courses found!"));
 });
 
-export { getMyprofile, getAuthenticatedUser, getPublisherCourses,getLoggedInUser };
+export {
+  getMyprofile,
+  getAuthenticatedUser,
+  getPublisherCourses,
+  getLoggedInUser,
+};

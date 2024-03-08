@@ -13,11 +13,11 @@ const Navbar = () => {
     setPublisherId(location?.pathname.split("/")[2]);
   }, []);
   return (
-    <div className="d-flex flex-column bg-black vh-100 text-nowrap">
+    <div className="bg-black text-nowrap d-flex container-fluid">
       <button
-        className="bg-white text-decoration-none text-black h3 p-3 w-100"
+        className="bg-white text-decoration-none text-black p-3 h4 d-flex justify-content-center me-5"
         onClick={() =>
-          navigate(`/publisher/${auth?.user?._id || publisherId}`, {
+          navigate(`/student/${auth?.user?._id || publisherId}`, {
             state: { id: auth?.user?._id },
           })
         }
@@ -27,69 +27,66 @@ const Navbar = () => {
       <NavLink
         className={({ isActive }) =>
           isActive
-            ? "bg-primary text-decoration-none text-white p-3 w-100"
+            ? "bg-primary text-decoration-none text-white p-3 "
             : "text-white p-3"
         }
         end
-        to={`/publisher/${auth?.user?._id || publisherId}`}
+        to={`/student/${auth?.user?._id || publisherId}`}
         state={{ id: auth?.user?._id }}
       >
-        Start up
+        Home
       </NavLink>
       <NavLink
         className={({ isActive }) =>
-          isActive ? "bg-primary  text-white p-3 w-100" : "text-white p-3"
+          isActive ? "bg-primary  text-white p-3 " : "text-white p-3"
         }
         end
-        to={`/publisher/${auth?.user?._id || publisherId}/about`}
+        to={`/student/${auth?.user?._id || publisherId}/about`}
         state={{ id: auth?.user?._id }}
       >
         About
       </NavLink>
       <NavLink
         className={({ isActive }) =>
-          isActive ? "bg-primary  text-white p-3 w-100" : "text-white p-3"
+          isActive ? "bg-primary  text-white p-3 " : "text-white p-3"
         }
-        to={`/publisher/${auth?.user?._id || publisherId}/courses`}
+        to={`/student/${auth?.user?._id || publisherId}/courses`}
         state={{ id: auth?.user?._id }}
       >
         Courses
       </NavLink>
 
       {auth?.user === null ? (
-        <>
+        <div className="ms-auto d-flex flex-direction-row">
           <NavLink
             style={{ marginRight: "50px" }}
-            to={`/publisher/${auth?.user?._id || publisherId}/sign-up`}
+            to={`/student/${auth?.user?._id || publisherId}/sign-up`}
             state={{ id: auth?.user?._id }}
-            className={({ isActive }) =>
-              isActive ? "bg-primary  text-white p-3 w-100" : "text-white p-3"
+            className={"d-flex align-items-center btn btn-primary"
             }
           >
             Sign up
           </NavLink>
           <NavLink
             style={{ marginRight: "50px" }}
-            to={`/publisher/${auth?.user?._id || publisherId}/log-in`}
+            to={`/student/${auth?.user?._id || publisherId}/log-in`}
             state={{ id: auth?.user?._id }}
-            className={({ isActive }) =>
-              isActive ? "bg-primary  text-white p-3 w-100" : "text-white p-3"
-            }
+            className={"d-flex align-items-center btn btn-primary"}
           >
             login in
           </NavLink>
-        </>
+        </div>
       ) : (
         <>
           {auth?.role === "STUDENT" ? (
             <>
               <NavLink
                 style={{ marginRight: "50px" }}
-                to={`/publisher/${auth?.user?._id || publisherId}/watchcourses`}
+                to={`/student/${auth?.user?._id || publisherId}/watchcourses`}
                 state={{ id: auth?.user?._id }}
                 className={({ isActive }) =>
                   isActive
-                    ? "bg-primary  text-white p-3 w-100"
+                    ? "bg-primary  text-white p-3 "
                     : "text-white p-3"
                 }
               >
@@ -97,13 +94,13 @@ const Navbar = () => {
               </NavLink>
               <NavLink
                 style={{ marginRight: "50px" }}
-                to={`/publisher/${auth?.user?._id || publisherId}/log-in`}
+                to={`/student/${auth?.user?._id || publisherId}/log-in`}
                 className={({ isActive }) =>
                   isActive
-                    ? "bg-primary  text-white p-3 w-100"
+                    ? "bg-primary  text-white p-3 "
                     : "text-white p-3"
                 }
-                onClick={(e) => {
+                onClick={() => {
                   localStorage.clear();
                   setAuth({ user: null });
                   setUser(null);
@@ -116,10 +113,10 @@ const Navbar = () => {
             <>
               <NavLink
                 style={{ marginRight: "50px" }}
-                to={`/publisher/${auth?.user?._id || publisherId}/editcourse`}
+                to={`/student/${auth?.user?._id || publisherId}/editcourse`}
                 className={({ isActive }) =>
                   isActive
-                    ? "bg-primary  text-white p-3 w-100"
+                    ? "bg-primary  text-white p-3 "
                     : "text-white p-3"
                 }
                 state={{ id: auth?.user?._id }}
@@ -130,7 +127,7 @@ const Navbar = () => {
                 style={{ marginRight: "50px" }}
                 className={({ isActive }) =>
                   isActive
-                    ? "bg-primary  text-white p-3 w-100"
+                    ? "bg-primary  text-white p-3 "
                     : "text-white p-3"
                 }
                 to={"/log-in"}
