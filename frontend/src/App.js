@@ -32,6 +32,7 @@ import WatchCoursesPublisher from "./Pages/Publisher/WatchCourses";
 import GetAuth from "./Routes/GetAuth";
 import BuildWebsite from "./Pages/Publisher/BuildWebsite";
 import BuilderLayout from "./Layouts/BuilderLayout";
+import AddNewCourse from "./Pages/Publisher/AddNewCourse";
 
 function App() {
   return (
@@ -57,10 +58,11 @@ function App() {
         <Route path="" element={<PublisherLayout />}>
           {/* Protected */}
           <Route path="/publisher/:publisherId" element={<RequireAuth />}>
-            <Route path=":publisherId" element={<PublisherHome />} />
+            <Route path="" element={<PublisherHome />} />
             <Route path="about" element={<PublisherAbout />} />
-            <Route path="courses" element={<PublisherCourse />} />
+            {/* <Route path="courses" element={<PublisherCourse />} /> */}
             <Route path="editcourse" element={<ManageCourse />} />
+            <Route path="add-new-course" element={<AddNewCourse />} />
           </Route>
           <Route path=":publisherId/*" element={<h1>Not found</h1>} />
         </Route>

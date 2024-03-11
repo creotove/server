@@ -46,16 +46,6 @@ const Navbar = () => {
       >
         About
       </NavLink>
-      <NavLink
-        className={({ isActive }) =>
-          isActive ? "bg-primary  text-white p-3 w-100" : "text-white p-3"
-        }
-        to={`/publisher/${auth?.user?._id || publisherId}/courses`}
-        state={{ id: auth?.user?._id }}
-      >
-        Courses
-      </NavLink>
-
       {auth?.user === null ? (
         <>
           <NavLink

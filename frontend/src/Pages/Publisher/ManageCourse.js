@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { Button, Card, ListGroup, Table } from "react-bootstrap";
 import axios from "../../api/axios";
 import Modal from "react-bootstrap/Modal";
@@ -9,7 +9,7 @@ const EditCourse = () => {
   const [courses, setCourses] = useState(); //display courses
   const [editMode, setEditMode] = useState(false); //is edit mode
   const [courseId, setCourseId] = useState(""); //For Edit
-
+  const navigate = useNavigate();
   // form Data
   const [name, setName] = useState("dummy test");
   const [thumbnail, setThumbnail] = useState("");
@@ -80,7 +80,7 @@ const EditCourse = () => {
       if (res.data.success) {
         console.log("course created");
         setShow(false);
-        getMycourses()
+        getMycourses();
       }
 
       // use the edit mode to toggle
@@ -104,9 +104,11 @@ const EditCourse = () => {
     try {
       e.preventDefault();
       e.stopPropagation();
-      const res = await axios.delete(`/teacher/delete?courseId=${id}`);
+      const res = await axios.delete(
+        `/publisher/delete-course?courseId=${id}&publisherId=${publisherId}`
+      );
       if (res.data.success) {
-        // getMycourses();
+        getMycourses();
       }
     } catch (error) {
       console.log(error);
@@ -240,7 +242,9 @@ const EditCourse = () => {
       </Modal>
       <h1>My Courses</h1>
       <div className="d-flex justify-content-end">
-        <Button onClick={handleShow}>Add New Course</Button>
+        <Button onClick={() => navigate(`/publisher/${publisherId}/add-new-course`)}>
+          Add New Course
+        </Button>
       </div>
       <div className="container">
         <div className="d-flex justify-content-between align-items-center">
@@ -285,7 +289,12 @@ const EditCourse = () => {
                       >
                         Edit
                       </button>
-                      <button className="btn btn-danger" onClick={(e)=>handleDelete(e,course._id)}>Delete</button>
+                      <button
+                        className="btn btn-danger"
+                        onClick={(e) => handleDelete(e, course._id)}
+                      >
+                        Delete
+                      </button>
                     </div>
                   </Card>
                 </div>

@@ -7,17 +7,23 @@ import { AuthProvider } from "./context/AuthProvider";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { LoggedInProvider } from "./context/LoggedInUserProvider";
+import { CourseProvider } from "./context/CourseProvider";
+import { StepsProvider } from "./context/StepsProvider";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <BrowserRouter>
       <LoggedInProvider>
-        <AuthProvider>
-          <Routes>
-            <Route path="/*" element={<App />} />
-          </Routes>
-        </AuthProvider>
+        <CourseProvider>
+          <StepsProvider>
+            <AuthProvider>
+              <Routes>
+                <Route path="/*" element={<App />} />
+              </Routes>
+            </AuthProvider>
+          </StepsProvider>
+        </CourseProvider>
       </LoggedInProvider>
     </BrowserRouter>
   </React.StrictMode>

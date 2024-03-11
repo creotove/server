@@ -5,6 +5,8 @@ import ChaptersModel from "../models/newModels/ChaptersModel.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+import uploadOnCloudinary, { deleteOnCloudinary } from "../utils/cloudinary.js";
+import { unLinkFile } from "../utils/unLinkFile.js";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 
@@ -119,12 +121,27 @@ const createCourse = asyncHandler(async (req, res) => {
     description,
   } = req.body;
   const thumbnail = req.file;
+
+  // Step 5
+  const localpath = thumbnail.path;
+  if (!localpath) throw new ApiError(400, "Avatar is required");
+  const coverThumbnail = await uploadOnCloudinary(localpath);
+  if (!coverThumbnail) throw new ApiError(400, "Avatar is required");
+
+  /// Step 6
+  unLinkFile(localpath)
+    .then((result) => {
+      console.log("Deletion result:", result);
+    })
+    .catch((error) => {
+      console.error("Deletion error:", error);
+    });
   const newCourse = await CoursesModel.create({
     name,
     chapters,
     createdBy,
     description,
-    thumbnail: thumbnail.path,
+    thumbnail: coverThumbnail.url,
     courseFor,
     priceDollar,
     priceINR,
@@ -137,14 +154,11 @@ const createCourse = asyncHandler(async (req, res) => {
   });
   if (!newCourse) throw new ApiError(400, "Error in new creating course");
 
-  const publisher = await PublisherModel.findOneAndUpdate(
-    { user_id: createdBy },
-    {
-      $push: newCourse._id,
-    }
-  );
-
+  const publisher = await PublisherModel.findOne({ user_id: createdBy });
+  
   if (!publisher) throw new ApiError(400, "Linking failed");
+  publisher.courses.push(newCourse._id);
+  await publisher.save()
 
   res.status(200).json(new ApiResponse(200, {}, "Course Created Successfully"));
 });
@@ -189,4 +203,35 @@ const createChapter = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, {}, "Chapter created successfully"));
 });
 
-export { signUp, logIn, createCourse, createChapter };
+const deleteCourse = asyncHandler(async (req, res) => {
+  const { courseId, publisherId } = req.query;
+  if (!courseId) throw new ApiError(400, "Course id not received");
+  if (!publisherId) throw new ApiError(400, "Course id not received");
+  const courseExisted = await CoursesModel.findById(courseId);
+  if (!courseExisted) throw new ApiError(404, "Course not found");
+
+  const publisher = await PublisherModel.findOne({ user_id: publisherId });
+  if (!publisher) throw new ApiError(404, "Publisher not found");
+
+  const deleteThumbnail = await deleteOnCloudinary(courseExisted.thumbnail);
+  if (!deleteThumbnail.result)
+    throw new ApiError(500, "Thumbnail deletion failed");
+  const deleteCrse = await CoursesModel.findByIdAndDelete(courseId);
+  if (!deleteCrse) throw new ApiError(500, "Cannot delete the course");
+
+  const deleteCoursefromPublisherAccount =
+    await PublisherModel.findOneAndUpdate({
+      $pull: { courses: { $in: [courseId] } },
+    });
+  if (!deleteCoursefromPublisherAccount)
+    throw new ApiError(
+      500,
+      "Error in deletion of course from publisher account"
+    );
+
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Course deleted successfully"));
+});
+
+export { signUp, logIn, createCourse, createChapter, deleteCourse };

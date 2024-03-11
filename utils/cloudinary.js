@@ -30,5 +30,16 @@ const uploadOnCloudinary = async (localFilePath) => {
     return null;
   }
 };
-
+const deleteOnCloudinary = async (path) => {
+  try {
+    const fileName = path.split("/");
+    const fileToBeDelted = fileName[fileName.length - 1].split(".")[0];
+    console.log("file name  :", fileToBeDelted);
+    const result = await cloudinary.uploader.destroy(fileToBeDelted);
+    return result;
+  } catch (error) {
+    console.log(error);
+  }
+};
+export { deleteOnCloudinary };
 export default uploadOnCloudinary;

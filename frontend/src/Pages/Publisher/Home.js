@@ -1,5 +1,4 @@
 import React from "react";
-import Card from "react-bootstrap/Card";
 import useLoggedIn from "../../hooks/useLoggedIn";
 import { useNavigate } from "react-router-dom";
 
@@ -11,7 +10,7 @@ const Home = () => {
       <section className="d-flex justify-content-center h1">
         Welcome {user?.email}
       </section>
-      <div className="container overflow-hidden">
+      {/* <div className="container overflow-hidden">
         <div className="row gy-4">
           <div className="col-12 col-md-6" style={{ cursor: "pointer" }}>
             <Card className="bg-light">
@@ -68,7 +67,9 @@ const Home = () => {
             </Card>
           </div>
         </div>
-      </div>
+      </div> */}
+    
+   
     </>
   );
 };
