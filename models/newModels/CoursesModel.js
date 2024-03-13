@@ -9,10 +9,10 @@ const courseSchema = mongoose.Schema(
       type: mongoose.SchemaTypes.ObjectId,
       ref: "publisher",
     },
-    chapters: [
+    sections: [
       {
         type: mongoose.SchemaTypes.ObjectId,
-        ref: "chapter",
+        ref: "section",
       },
     ],
     thumbnail: {
@@ -64,7 +64,7 @@ const courseSchema = mongoose.Schema(
     },
     noUserUserAccessedBy: {
       // Number of the user can access the course
-      type: Boolean,
+      type: Number,
     },
     publish: {
       type: Boolean,
@@ -72,6 +72,7 @@ const courseSchema = mongoose.Schema(
     },
     description: {
       type: String,
+      required: [true, "Description for the course is requried"],
     },
   },
   { timeStamps: true }

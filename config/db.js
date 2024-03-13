@@ -5,10 +5,10 @@ const connectDB = async () => {
     let mongoURL;
     if (process.env.NODE_ENV === "production") {
       mongoURL = process.env.MONGODB_URI;
-      console.log('Connected to production');
+      console.log('Working in production');
     } else {
       mongoURL = "mongodb://localhost:27017/courseManagementSystem";
-      console.log('Connected to development');
+      console.log('Working in development');
     }
     const conn = await mongoose.connect(mongoURL);
     console.log(`MongoDB connected: ${conn.connection.host}`);

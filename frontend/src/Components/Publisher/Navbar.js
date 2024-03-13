@@ -3,7 +3,7 @@ import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
 import useLoggedIn from "../../hooks/useLoggedIn";
 
-const Navbar = () => {
+const Navbar = ({close}) => {
   const { auth, setAuth } = useAuth();
   const navigate = useNavigate();
   const { setUser } = useLoggedIn();
@@ -13,7 +13,7 @@ const Navbar = () => {
     setPublisherId(location?.pathname.split("/")[2]);
   }, []);
   return (
-    <div className="d-flex flex-column bg-black vh-100 text-nowrap">
+    <div className={` ${close ? 'hidden' : 'd-flex flex-column bg-black h-full min-h-screen  text-nowrap'} `}>
       <button
         className="bg-white text-decoration-none text-black h3 p-3 w-100"
         onClick={() =>
@@ -106,7 +106,7 @@ const Navbar = () => {
             <>
               <NavLink
                 style={{ marginRight: "50px" }}
-                to={`/publisher/${auth?.user?._id || publisherId}/editcourse`}
+                to={`/publisher/${auth?.user?._id || publisherId}/courses`}
                 className={({ isActive }) =>
                   isActive
                     ? "bg-primary  text-white p-3 w-100"
@@ -114,7 +114,7 @@ const Navbar = () => {
                 }
                 state={{ id: auth?.user?._id }}
               >
-                Manage course
+                Course
               </NavLink>
               <NavLink
                 style={{ marginRight: "50px" }}

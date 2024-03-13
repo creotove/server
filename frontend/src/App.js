@@ -15,7 +15,7 @@ import AcademySignUp from "./Pages/Academy/SignUp";
 import PublisherLayout from "./Layouts/PublisherLayout";
 import PublisherHome from "./Pages/Publisher/Home";
 import PublisherAbout from "./Pages/Publisher/About";
-import PublisherCourse from "./Pages/Publisher/Courses";
+// import PublisherCourse from "./Pages/Publisher/Courses";
 import PublisherLogin from "./Pages/Publisher/Login";
 import PublisherSignUp from "./Pages/Publisher/SignUp";
 import ManageCourse from "./Pages/Publisher/ManageCourse";
@@ -33,6 +33,7 @@ import GetAuth from "./Routes/GetAuth";
 import BuildWebsite from "./Pages/Publisher/BuildWebsite";
 import BuilderLayout from "./Layouts/BuilderLayout";
 import AddNewCourse from "./Pages/Publisher/AddNewCourse";
+import Category from "./Pages/Publisher/Category";
 
 function App() {
   return (
@@ -61,7 +62,8 @@ function App() {
             <Route path="" element={<PublisherHome />} />
             <Route path="about" element={<PublisherAbout />} />
             {/* <Route path="courses" element={<PublisherCourse />} /> */}
-            <Route path="editcourse" element={<ManageCourse />} />
+            <Route path="courses" element={<ManageCourse />} />
+            <Route path="category" element={<Category />} />
             <Route path="add-new-course" element={<AddNewCourse />} />
           </Route>
           <Route path=":publisherId/*" element={<h1>Not found</h1>} />
@@ -83,7 +85,7 @@ function App() {
           <Route path=":publisherId/about" element={<PublisherAbout />} />
           <Route path=":publisherId/log-in" element={<PublisherLogin />} />
           <Route path=":publisherId/sign-up" element={<PublisherSignUp />} />
-          <Route path=":publisherId/courses" element={<PublisherCourse />} />
+          {/* <Route path=":publisherId/courses" element={<PublisherCourse />} /> */}
           {/* Protected */}
           <Route path=":publisherId" element={<RequireAuth />}>
             <Route path="watchcourses" element={<WatchCoursesPublisher />} />

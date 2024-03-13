@@ -6,9 +6,7 @@ const PublishCoursesStepper = () => {
   const stepRef = useRef([]);
   const {
     currentStep,
-    setCurrentStep,
     stepsConfig,
-    setIsComplete,
     isComplete,
   } = useSteps();
   const [margins, setMargins] = useState({
@@ -16,16 +14,6 @@ const PublishCoursesStepper = () => {
     marginRight: 0,
   });
 
-  const handleNext = () => {
-    setCurrentStep((prev) => {
-      if (prev === stepsConfig.length) {
-        setIsComplete(true);
-        return prev;
-      } else {
-        return prev + 1;
-      }
-    });
-  };
 
   const calculateProgressBarWidth = () => {
     return ((currentStep - 1) / (stepsConfig.length - 1)) * 100;
@@ -82,11 +70,11 @@ const PublishCoursesStepper = () => {
       <section className="flex flex-col">
         <ActiveComponent />
         <div className="flex justify-end">
-          {!isComplete && (
+          {/* {!isComplete && (
             <button className="btn btn-primary" onClick={handleNext}>
               {currentStep === stepsConfig.length ? "Publish" : "Next"}
             </button>
-          )}
+          )} */}
         </div>
       </section>
     </>

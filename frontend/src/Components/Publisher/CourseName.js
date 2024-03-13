@@ -1,7 +1,9 @@
 import { useState } from "react";
 import useCourse from "../../hooks/useCourse";
+import useSteps from "../../hooks/useSteps";
 const CourseName = () => {
   const { course, setCourse } = useCourse();
+  const { setCurrentStep } = useSteps();
   const [name, setName] = useState("");
   return (
     <div className="flex  justify-center mt-5">
@@ -16,6 +18,15 @@ const CourseName = () => {
           }}
           className="border rounded ps-1 py-1"
         />
+        <button
+          className="btn btn-primary mt-7"
+          onClick={() => {
+            if (name.trim() === "") return;
+            setCurrentStep(2);
+          }}
+        >
+          Next
+        </button>
       </div>
     </div>
   );

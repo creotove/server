@@ -12,7 +12,7 @@ cloudinary.config({
 const uploadOnCloudinary = async (localFilePath) => {
   try {
     if (!localFilePath) return null;
-    //uplod file on cloudinary
+    //upload file on cloudinary
     const result = await cloudinary.uploader.upload(localFilePath, {
       resource_type: "auto",
     });
@@ -20,7 +20,7 @@ const uploadOnCloudinary = async (localFilePath) => {
 
     // Respond with the Cloudinary URL or any other desired information
   } catch (error) {
-    unLinkFile(localFilePath)
+    await unLinkFile(localFilePath)
       .then((result) => {
         console.log("Deletion result:", result);
       })

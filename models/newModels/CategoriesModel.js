@@ -9,6 +9,10 @@ const categorySchema = mongoose.Schema(
       type: String,
       required: [true, "Description of the category is required"],
     },
+    createdBy: {
+      type: mongoose.SchemaTypes.ObjectId,
+      ref: "publisher",
+    },
   },
   { timeStamps: true }
 );
