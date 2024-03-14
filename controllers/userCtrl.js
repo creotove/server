@@ -73,7 +73,6 @@ const getLoggedInUser = asyncHandler(async (req, res) => {
 });
 const getPublisherCourses = asyncHandler(async (req, res) => {
   const { publisherId } = req.params;
-  console.log(publisherId);
 
   const courses = await CoursesModel.find({
     createdBy: publisherId,
@@ -82,10 +81,22 @@ const getPublisherCourses = asyncHandler(async (req, res) => {
     return res.status(404).json(new ApiResponse(404, {}, "No courses found"));
   return res.status(200).json(new ApiResponse(200, courses, "Courses found!"));
 });
+const getCourse = asyncHandler(async (req, res) => {
+  const { courseId } = req.params;
+  if (!courseId) throw new ApiError(400, "Course Id not found");
+  const course = await CoursesModel.findById(courseId).select(
+    "thumbnail priceINR name description category"
+  );
+  if (!course) throw new ApiError(404, "Course not found");
+  return res
+    .status(200)
+    .json(new ApiResponse(200, course, "Course found successfully"));
+});
 
 export {
   getMyprofile,
   getAuthenticatedUser,
   getPublisherCourses,
   getLoggedInUser,
+  getCourse,
 };

@@ -11,7 +11,7 @@ const storage = multer.diskStorage({
     cb(null, path.join(__dirname, "../public/temp"));
   },
   filename: function (req, file, cb) {
-    cb(null, Date.now() + "-" + file.originalname);
+    cb(null, "digital-rojgar" + "-" + file.originalname);
   },
 });
 

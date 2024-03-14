@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import DigiLayout from "./Layouts/DigiLayout";
 import DigiHome from "./Pages/Digi/Home";
 import DigiAbout from "./Pages/Digi/About";
@@ -22,20 +22,25 @@ import ManageCourse from "./Pages/Publisher/ManageCourse";
 
 import StudentLayout from "./Layouts/StudentLayout";
 import StudentHome from "./Pages/Common/Home";
+import CoursesStudent from "./Pages/Student/Courses";
+import SeeCourse from "./Pages/Student/SeeCourse";
 
 import NotFound from "./Pages/Common/NotFound";
 import UnAuthorized from "./Pages/Common/UnAuthorized";
 
 import RequireAuth from "./Routes/RequireAuth";
 import WatchCoursesAcademey from "./Pages/Academy/WatchCourses";
-import WatchCoursesPublisher from "./Pages/Publisher/WatchCourses";
+import WatchCoursesStudent from "./Pages/Student/WatchCourses";
 import GetAuth from "./Routes/GetAuth";
 import BuildWebsite from "./Pages/Publisher/BuildWebsite";
 import BuilderLayout from "./Layouts/BuilderLayout";
 import AddNewCourse from "./Pages/Publisher/AddNewCourse";
 import Category from "./Pages/Publisher/Category";
+import useAuth from "./hooks/useAuth";
+import CheckoutPage from "./Pages/Student/CheckoutPage";
 
 function App() {
+  const { auth } = useAuth();
   return (
     <Routes>
       <Route path="/" element={<DigiLayout />}>
@@ -83,12 +88,28 @@ function App() {
         <Route path="" element={<StudentLayout />}>
           <Route path=":publisherId" element={<StudentHome />} />
           <Route path=":publisherId/about" element={<PublisherAbout />} />
-          <Route path=":publisherId/log-in" element={<PublisherLogin />} />
-          <Route path=":publisherId/sign-up" element={<PublisherSignUp />} />
-          {/* <Route path=":publisherId/courses" element={<PublisherCourse />} /> */}
+          <Route
+            path=":publisherId/log-in"
+            element={
+              auth ? <PublisherLogin /> : <Navigate to=":publisherId/log-in" />
+            }
+          />
+          <Route
+            path=":publisherId/sign-up"
+            element={
+              auth ? (
+                <PublisherSignUp />
+              ) : (
+                <Navigate to=":publisherId/sign-up" />
+              )
+            }
+          />
+          <Route path=":publisherId/courses" element={<CoursesStudent />} />
           {/* Protected */}
           <Route path=":publisherId" element={<RequireAuth />}>
-            <Route path="watchcourses" element={<WatchCoursesPublisher />} />
+            <Route path="watchcourses" element={<WatchCoursesStudent />} />
+            <Route path="see-courses/:courseId" element={<SeeCourse />} />
+            <Route path="checkout-page/:courseId" element={<CheckoutPage />} />
           </Route>
           <Route path=":publisherId/*" element={<h1>Not found</h1>} />
         </Route>

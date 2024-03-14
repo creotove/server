@@ -53,7 +53,7 @@ const Navbar = () => {
         to={`/student/${auth?.user?._id || publisherId}/courses`}
         state={{ id: auth?.user?._id }}
       >
-        Courses
+        Courses 
       </NavLink>
 
       {auth?.user === null ? (
@@ -111,18 +111,7 @@ const Navbar = () => {
             </>
           ) : (
             <>
-              <NavLink
-                style={{ marginRight: "50px" }}
-                to={`/student/${auth?.user?._id || publisherId}/editcourse`}
-                className={({ isActive }) =>
-                  isActive
-                    ? "bg-primary  text-white p-3 "
-                    : "text-white p-3"
-                }
-                state={{ id: auth?.user?._id }}
-              >
-                Manage course
-              </NavLink>
+             
               <NavLink
                 style={{ marginRight: "50px" }}
                 className={({ isActive }) =>

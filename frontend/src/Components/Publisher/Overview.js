@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import axios from "../../api/axios";
 import useCourse from "../../hooks/useCourse";
 import defaultThumbnail from "../../assets/thumbnail/thumbnail.png";
@@ -7,6 +7,7 @@ import defaultThumbnail from "../../assets/thumbnail/thumbnail.png";
 function CourseSettings() {
   const { course, setCourse } = useCourse();
   const location = useLocation();
+  const navigate = useNavigate();
   const [categories, setCategories] = useState();
 
   const publisherId = location.pathname.split("/")[2];
@@ -70,12 +71,17 @@ function CourseSettings() {
   const handleSubmit = async (e) => {
     try {
       e.preventDefault();
-      const res = await axios.post("/publisher/create-course", course, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      const res = await axios.post(
+        "/publisher/create-course",
+        { ...course, createdBy: publisherId },
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
       if (res.data.success) {
+        navigate(`/publisher/${publisherId}/courses`);
       }
     } catch (error) {
       console.log("Error in creating course");

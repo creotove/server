@@ -33,6 +33,7 @@ const ManageCourse = () => {
       const res = await axios.get(`user/get-publisher-courses/${publisherId}`);
       if (res.data.success) {
         setCourses(res.data.data);
+        console.log(res.data.data);
       }
     } catch (error) {
       console.log(error);
@@ -58,13 +59,14 @@ const ManageCourse = () => {
   }, []);
   return (
     <section className="container-fluid mt-5 ">
-      <div>
-        <button
-          className="btn btn-primary"
-          onClick={() => navigate(`/publisher/${publisherId}/category`)}
-        >
-          Add Category
-        </button>
+      <div className="flex justify-between">
+          <button
+            className="btn btn-primary"
+            onClick={() => navigate(`/publisher/${publisherId}/category`)}
+          >
+            Add Category
+          </button>
+        
       </div>
       <h1>My Courses</h1>
       <div className="d-flex justify-content-end">
@@ -77,9 +79,31 @@ const ManageCourse = () => {
           Add New Course
         </Button>
       </div>
-      <div className="container">
-        <div className="d-flex justify-content-between align-items-center">
-          <div className="row col-12"></div>
+      <div className="container-fluid row col-12">
+        <div className="row col-12 ">
+          <div className="row col-12 ">
+            <div className="flex flex-wrap">
+              {courses && courses.length > 0 ? (
+                courses.map((course, idx) => (
+                  <div className="card col-12 col-md-5 m-1" key={idx}>
+                    <img
+                      className="card-img-top h-44 object-cover"
+                      src={course?.thumbnail}
+                      alt="Card image cap"
+                    />
+                    <div className="card-body">
+                      <h5 className="card-title">{course?.name}</h5>
+                      <p className="card-text">{course?.description}</p>
+                    </div>
+                  </div>
+                ))
+              ) : (
+                <div>
+                  <p>No courses found</p>
+                </div>
+              )}
+            </div>
+          </div>
         </div>
       </div>
     </section>

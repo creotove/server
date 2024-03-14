@@ -31,6 +31,7 @@ const Login = () => {
         publisherId,
       };
       const res = await axios.post("/student/log-in", data);
+      console.log(data)
       if (res.data.success) {
         navigate(`/student/${publisherId}`);
         const user = res?.data?.user;

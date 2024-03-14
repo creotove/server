@@ -7,7 +7,7 @@ import useLoggedIn from "../hooks/useLoggedIn";
 const GetAuth = () => {
   const location = useLocation();
   const { user, setUser } = useLoggedIn();
-  const { auth, setAuth } = useAuth();
+  const { setAuth } = useAuth();
   const [loading, setLoading] = useState(true);
   const from = location.pathname.split("/")[1] || "/";
   const publisherId = location.pathname.split("/")[2] || "/";
@@ -24,13 +24,14 @@ const GetAuth = () => {
         }
       );
       if (res.data.success) {
-        const user = res?.data?.data?.user;
-        const role = res?.data?.data?.user.role || "STUDENT";
-        setUser(res?.data?.data?.user);
+        const user = res?.data?.data?.user || res.data.data.student;
+        const role = res?.data?.data?.user?.role || "STUDENT";
+        setUser(user);
         const data = {
           user,
           role,
         };
+        console.log(data)
         setAuth(data);
       }
     } catch (error) {
@@ -42,7 +43,7 @@ const GetAuth = () => {
   useEffect(() => {
     if (!user) getLoggedInUser();
   }, [user]);
-  return loading ? <p>loading....</p> : <Outlet />  ;
+  return loading ? <p>loading....</p> : <Outlet />;
 };
 
 export default GetAuth;

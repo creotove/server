@@ -2,7 +2,7 @@ import express from "express";
 // import {} from "../controllers/adminCtrls.js";
 // import { upload } from "../middlewares/multer.js";
 // import { auth } from "../middlewares/auth.js";
-// import StudentModel from "../models/StudentModel.js";
+// import StudentsModel from "../models/StudentsModel.js";
 // import TeacherModel from "../models/TeacherModel.js";
 // import CourseModel from "../models/CourseModel.js";
 // import bcryptjs from "bcryptjs";
@@ -66,7 +66,7 @@ const router = express.Router();
 //     });
 //     let newRolledUser;
 //     if (role == "STUDENT") {
-//       newRolledUser = await StudentModel.create({
+//       newRolledUser = await StudentsModel.create({
 //         name,
 //         user_id: user._id,
 //         mobileNumber,
@@ -119,7 +119,7 @@ const router = express.Router();
 //     }
 //     let deletedUser;
 //     if (user.role === "STUDENT") {
-//       deletedUser = await StudentModel.findByIdAndDelete(user._id);
+//       deletedUser = await StudentsModel.findByIdAndDelete(user._id);
 //     }
 //     if (user.role === "TEACHER") {
 //       deletedUser = await TeacherModel.findByIdAndDelete(user._id);
@@ -174,7 +174,7 @@ const router = express.Router();
 //     courseCreator.myCourses = newCourses;
 //     await courseCreator.save();
 
-//     const courseEnroller = await StudentModel.findOne({
+//     const courseEnroller = await StudentsModel.findOne({
 //       enrolledIn: { $in: [courseID] },
 //     });
 //     const enrollerCourses = courseEnroller?.enrolledIn;
@@ -220,7 +220,7 @@ const router = express.Router();
 //       const course = courses[i];
 
 //       // Remove the course from all the students enrolled in it
-//       await StudentModel.updateMany(
+//       await StudentsModel.updateMany(
 //         { enrolledIn: course._id },
 //         { $pull: { enrolledIn: course._id } }
 //       );
@@ -260,7 +260,7 @@ const router = express.Router();
 //         message: "Student id not found",
 //       });
 //     }
-//     const student = await StudentModel.findById(studentID);
+//     const student = await StudentsModel.findById(studentID);
 //     if (!student) {
 //       return res.status(404).send({
 //         success: false,
@@ -275,7 +275,7 @@ const router = express.Router();
 //     );
 
 //     await UserModel.findByIdAndDelete(student.user_id)
-//     await StudentModel.findByIdAndDelete(studentID);
+//     await StudentsModel.findByIdAndDelete(studentID);
 
 //     return res.status(200).send({
 //       message: "Deleted succesfully",
@@ -291,7 +291,7 @@ const router = express.Router();
 // });
 // router.get("/students", async (req, res) => {
 //   try {
-//     const student = await StudentModel.find().populate("enrolledIn");
+//     const student = await StudentsModel.find().populate("enrolledIn");
 //     if (!student) {
 //       return res.status(200).send({
 //         message: "No student found",

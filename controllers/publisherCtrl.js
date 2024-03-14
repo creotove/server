@@ -7,7 +7,6 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import uploadOnCloudinary, { deleteOnCloudinary } from "../utils/cloudinary.js";
-import cloudinary from "cloudinary";
 import { unLinkFile } from "../utils/unLinkFile.js";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
@@ -106,67 +105,6 @@ const logIn = async (req, res) => {
   }
 };
 
-const createCourse = asyncHandler(async (req, res) => {
-  const {
-    name,
-    createdBy,
-    courseFor,
-    priceINR,
-    priceDollar,
-    visible,
-    category,
-    expiry,
-    courseLanguage,
-    limitUser,
-    noUserUserAccessedBy,
-    publish,
-    description,
-  } = req.body;
-  const thumbnail = req.file;
-
-  // Step 5
-  const localpath = thumbnail.path;
-  if (!localpath) throw new ApiError(400, "Avatar is required");
-  const coverThumbnail = await uploadOnCloudinary(localpath);
-  if (!coverThumbnail) throw new ApiError(400, "Avatar is required");
-
-  /// Step 6
-  unLinkFile(localpath)
-    .then((result) => {
-      console.log("Deletion result:", result);
-    })
-    .catch((error) => {
-      console.error("Deletion error:", error);
-    });
-  const newCourse = await CoursesModel.create({
-    name,
-    chapters,
-    createdBy,
-    description,
-    thumbnail: coverThumbnail.url,
-    courseFor,
-    priceDollar,
-    priceINR,
-    category,
-    visible,
-    expiry,
-    courseLanguage,
-    limitUser,
-    noUserUserAccessedBy,
-    publish,
-  });
-  if (!newCourse) throw new ApiError(400, "Error in new creating course");
-
-  const publisher = await PublisherModel.findOne({ user_id: createdBy });
-
-  if (!publisher) throw new ApiError(400, "Linking failed");
-  publisher.courses.push(newCourse._id);
-  await publisher.save();
-
-  req.body.courseId = newCourse._id;
-  next();
-});
-
 const createCategory = asyncHandler(async (req, res) => {
   const { name, description, createdBy } = req.body;
   const existedCategory = await CategoriesModel.findOne({ name, createdBy });
@@ -194,144 +132,25 @@ const getPublisherCategory = asyncHandler(async (req, res) => {
     .json(new ApiResponse(200, categories, "Categories fetched"));
 });
 
-// const createChapter = asyncHandler(async (req, res) => {
-//   const {
-//     createdBy : publisherId,
-//     courseId,
-//     thumbnail,
-//     title,
-//     file,
-//     description,
-//     useFulLinks,
-//   } = req.body;
-//   if (!courseId) throw new ApiError(400, "Course Id is required");
-//   if (!thumbnail) throw new ApiError(400, "Thumbnail is required");
-//   if (!title) throw new ApiError(400, "Title is required");
-//   if (!file) throw new ApiError(400, "File is required");
-//   if (!description) throw new ApiError(400, "Description is required");
-//   if (!useFulLinks) throw new ApiError(400, "usefull Links is required");
-//   if (!publisherId) throw new ApiError(400, "Publisher is required");
-
-//   const isValidPublisher = await PublisherModel.findOne({
-//     courses: { $in: [course] },
-//   });
-
-//   const course = await CoursesModel.findById(courseId);
-//   if (!course) throw new ApiError(400, "No courses found");
-
-//   const chapter = await ChaptersModel.create({
-//     thumbnail,
-//     title,
-//     file,
-//     description,
-//     useFulLinks,
-//   });
-//   if (!chapter) throw new ApiError(400, "Chapter creation failed");
-//   course.chapters = chapter._id;
-//   await course.save();
-//   return res
-//     .status(200)
-//     .json(new ApiResponse(200, {}, "Chapter created successfully"));
-// });
-
-const createSections = asyncHandler(async (req, res) => {
-  const {
-    createdBy: publisherId,
-    courseId,
-    title,
-    description,
-    usefulLinks,
-  } = req.body;
-
-  if (!courseId) throw new ApiError(400, "Course Id is required");
-  if (!title) throw new ApiError(400, "Title is required");
-  if (!description) throw new ApiError(400, "Description is required");
-  if (!usefulLinks) throw new ApiError(400, "Useful Links are required");
-  if (!publisherId) throw new ApiError(400, "Publisher is required");
-
-  const course = await CoursesModel.findById(courseId);
-  if (!course) throw new ApiError(400, "No courses found");
-
-  const files = req.files; // Assuming files are uploaded using Multer middleware
-
-  // Check if any file is uploaded
-  if (!files || files.length === 0) {
-    throw new ApiError(400, "No files uploaded");
-  }
-
-  // Process each uploaded file
-  const uploadedFiles = await Promise.all(
-    files.map(async (file) => {
-      // Upload file to Cloudinary
-      const result = await cloudinary.uploader.upload(file.path);
-      // Create Chapter document and store file URL
-      return {
-        thumbnail: result.url,
-        title,
-        description,
-        usefulLinks,
-      };
-    })
-  );
-
-  // Create chapters in the database
-  const chapters = await ChaptersModel.create(uploadedFiles);
-  if (!chapters) throw new ApiError(400, "Chapter creation failed");
-
-  // Update course with the created chapters
-  course.chapters = chapters.map((chapter) => chapter._id);
-  await course.save();
-
-  return res
-    .status(200)
-    .json(new ApiResponse(200, {}, "Chapters created successfully"));
-});
-
-// const createNewCourse = asyncHandler(async (req, res) => {
-//   const {
-//     name, //learn english
-//     sections, // array of {name,chapters:[name,files]}
-//     inrPrice, // 500
-//     usdPrice, // 10
-//     language, // Hindi
-//     readerLevel, // Beginner
-//     visibleToPublic, //false || true
-//     featuredCourse, //false || true
-//     category, //category name
-//     courseExpiry, // false || true
-//     courseExpiryDate, //0 means no expiry
-//     limitCourseSale, // 0 means no limit
-//     limit, // false || true
-//   } = req.body;
-//   const thumbnail = req.files.filter(
-//     (thumbnail) => thumbnail.fieldname === "thumbnail"
-//   );
-//   const sectionImages = req.files.filter(
-//     (thumbnail) => thumbnail.fieldname !== thumbnail
-//   );
-//   console.log("thumbnail: ", thumbnail);
-//   console.log("section Images: ", sectionImages);
-//   return res
-//     .status(200)
-//     .json(new ApiResponse(200, {}, "New course created successfully"));
-// });
-
 const createNewCourse = asyncHandler(async (req, res) => {
   const {
     name,
     createdBy,
     courseFor,
-    priceINR,
-    priceDollar,
-    visible,
+    inrPrice: priceINR,
+    usdPrice: priceDollar,
+    visibleToPublic: visible,
     category,
     expiry,
-    courseLanguage,
+    language: courseLanguage,
     limitUser,
     noUserUserAccessedBy,
     description,
     sections,
   } = req.body;
+
+  const publisher = await PublisherModel.findOne({ user_id: createdBy });
+  if (!publisher)  throw new ApiError(404, "Publisher not found");
 
   // Upload thumbnail to Cloudinary
   const thumbnail = req.files.filter((file) => file.fieldname === "thumbnail");
@@ -345,20 +164,13 @@ const createNewCourse = asyncHandler(async (req, res) => {
   const coverThumbnail = await uploadOnCloudinary(thumbnailLocalPath);
   if (!coverThumbnail) throw new ApiError(400, "Upload error");
 
-  const sectionFilesLocalPath = [];
+  const chapterFiles = [];
   for (let i = 0; i < chapterImages.length; i++) {
-    const element = chapterImages[i]?.path;
-    sectionFilesLocalPath.push(element);
-  }
-  const sectionFilesUploadedUrl = [];
-  for (let i = 0; i < sectionFilesLocalPath.length; i++) {
-    const upload = await uploadOnCloudinary(sectionFilesLocalPath[i]);
-    if (!upload) throw new ApiError(400, "Upload error");
-    sectionFilesUploadedUrl.push(upload?.url);
-  }
-
-  for (let i = 0; i < sectionFilesLocalPath.length; i++) {
-    await unLinkFile(sectionFilesLocalPath[i])
+    const filelocalFilePath = chapterImages[i]?.path;
+    const uploadedFile = await uploadOnCloudinary(filelocalFilePath);
+    if (!uploadedFile) throw new ApiError(400, "Upload Error");
+    chapterFiles.push(uploadedFile?.url);
+    await unLinkFile(filelocalFilePath)
       .then((result) => {
         console.log("Deletion result:", result);
       })
@@ -374,13 +186,8 @@ const createNewCourse = asyncHandler(async (req, res) => {
     .catch((error) => {
       console.error("Deletion error:", error);
     });
-
-  let uploadImages = [];
-  for (let i = 0; i < chapterImages.length; i++) {
-    const element = chapterImages[i]?.path;
-    const uploadedFiles = await uploadOnCloudinary(element);
-    uploadImages.push(uploadedFiles?.url);
-  }
+  const existedCategory = await CategoriesModel.findOne({ name: category });
+  if (!existedCategory) throw new ApiError(404, "Category not found");
 
   const newCourse = await CoursesModel.create({
     name,
@@ -391,7 +198,7 @@ const createNewCourse = asyncHandler(async (req, res) => {
     priceDollar,
     visible,
     expiry,
-    category,
+    category: existedCategory._id,
     courseLanguage,
     limitUser,
     noUserUserAccessedBy,
@@ -399,23 +206,32 @@ const createNewCourse = asyncHandler(async (req, res) => {
   });
   if (!newCourse) throw new ApiError(400, "Cannot create course");
   for (let i = 0; i < sections.length; i++) {
-    const section = await SectionsModel.create({
-      name: sections[i]?.name,
+    const name = sections[i].name;
+    console.log(name, 208);
+    const newSection = await SectionsModel.create({
+      name,
       course_id: newCourse._id,
     });
-    if (!section) throw new ApiError(400, "Error in creating the sections");
-    await newCourse.sections.push(section._id);
+    if (!newSection) throw new ApiError(400, "Error in creating the sections");
+    await newCourse.sections.push(newSection._id);
     if (sections[i]?.chapters) {
       for (let j = 0; j < sections[i]?.chapters.length; j++) {
         const chapterName = sections[i]?.chapters[j].name;
         const newChapter = await ChaptersModel.create({
           name: chapterName,
-          file: chapterImages[j].url,
+          file: chapterFiles[j],
         });
         if (!newChapter) throw new ApiError(400, "Chapter creation error");
+        newSection.chapters.push(newChapter._id);
+        await newSection.save();
       }
     }
   }
+
+  await publisher.courses.push(newCourse._id);
+  await newCourse.save();
+  await publisher.save();
+
   return res
     .status(201)
     .json(new ApiResponse(201, {}, "Course Created successfully"));
@@ -455,9 +271,7 @@ const deleteCourse = asyncHandler(async (req, res) => {
 export {
   signUp,
   logIn,
-  createCourse,
   createCategory,
-  createSections,
   deleteCourse,
   getPublisherCategory,
   createNewCourse,

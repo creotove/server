@@ -1,9 +1,11 @@
-import StudentModel from "../models/newModels/StudentsModel.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
+import CourseModel from "../models/newModels/CoursesModel.js";
+import StudentsModel from "../models/newModels/StudentsModel.js";
+import SectionsModel from "../models/newModels/SectionsModel.js";
 
 const signUp = asyncHandler(async (req, res) => {
   const { name, email, mobileNumber, password, publisherId } = req.body;
@@ -12,7 +14,7 @@ const signUp = asyncHandler(async (req, res) => {
   if (!mobileNumber) throw new ApiError(400, "Mobile number is required");
   if (!password) throw new ApiError(400, "Password is required");
   if (!publisherId) throw new ApiError(400, "Something went wrong");
-  const existedStudent = await StudentModel.findOne({
+  const existedStudent = await StudentsModel.findOne({
     email,
     publisherId,
   });
@@ -22,7 +24,7 @@ const signUp = asyncHandler(async (req, res) => {
   const salt = await bcryptjs.genSalt(10);
   const hashedPassword = await bcryptjs.hash(stringPass, salt);
 
-  const student = await StudentModel.create({
+  const student = await StudentsModel.create({
     name,
     email,
     mobileNumber,
@@ -40,7 +42,7 @@ const logIn = asyncHandler(async (req, res) => {
   if (!email) throw new ApiError(400, "Email is required");
   if (!password) throw new ApiError(400, "Password is required");
   if (!publisherId) throw new ApiError(400, "PublisherId is required");
-  const student = await StudentModel.findOne({ email, publisherId });
+  const student = await StudentsModel.findOne({ email, publisherId });
   if (!student)
     throw new ApiError(400, "Account with this email does not exists");
 
@@ -58,7 +60,7 @@ const logIn = asyncHandler(async (req, res) => {
     expiresIn: "1d",
   });
 
-  const responseUser = await StudentModel.findById(student._id).select(
+  const responseUser = await StudentsModel.findById(student._id).select(
     "-password"
   );
 
@@ -73,4 +75,60 @@ const logIn = asyncHandler(async (req, res) => {
     )
   );
 });
-export { signUp, logIn };
+const purchaseCourse = asyncHandler(async (req, res) => {
+  const { courseId, studentId } = req.params;
+  if (!courseId) throw new ApiError(400, "Course Id not found");
+  if (!studentId) throw new ApiError(400, "Student Id not found");
+  const course = await CourseModel.findById(courseId);
+  if (!course) throw new ApiError(404, "Course not found");
+  const student = await StudentsModel.findById(studentId);
+  if (!student) throw new ApiError(404, "Student not found");
+  await course.enrolledBy.push(studentId);
+  await student.enrolledIn.push(courseId);
+
+  await course.save();
+  await student.save();
+  return res
+    .status(200)
+    .json(new ApiResponse(200, {}, "Course purchased successfully"));
+});
+const getPurchasedCoruses = asyncHandler(async (req, res) => {
+  const { studentId } = req.params;
+  if (!studentId) throw new ApiError(400, "Student id not found");
+  const stduent = await StudentsModel.findById(studentId).populate(
+    "enrolledIn"
+  );
+  if (!stduent) throw new ApiError(404, "Student not found");
+
+  console.log(stduent);
+  return res
+    .status(200)
+    .json(new ApiResponse(200, stduent, "Purchased course found successfully"));
+});
+const seePurchasedCourse = asyncHandler(async (req, res) => {
+  const { courseId, studentId } = req.params;
+  if (!courseId) throw new ApiError(400, "Course id not found");
+  if (!studentId) throw new ApiError(400, "Student id not found");
+  const course = await CourseModel.findById(courseId);
+  if (!course) throw new ApiError(404, "Course not found");
+
+  const sectionArray = course.sections;
+
+  const data = [];
+  for (let i = 0; i < sectionArray.length; i++) {
+    const section = await SectionsModel.findById(sectionArray[i]).populate(
+      "chapters"
+    );
+    if (!section) throw new ApiError(404, "No courses found");
+    data.push(section);
+  }
+  console.log(data);
+  return res.status(200).json(new ApiResponse(200, {}, "Course details found"));
+});
+export {
+  signUp,
+  logIn,
+  purchaseCourse,
+  getPurchasedCoruses,
+  seePurchasedCourse,
+};

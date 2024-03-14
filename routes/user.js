@@ -1,5 +1,5 @@
 import express from "express";
-import { getAuthenticatedUser,getPublisherCourses,getLoggedInUser } from "../controllers/userCtrl.js";
+import { getAuthenticatedUser,getPublisherCourses,getLoggedInUser,getCourse } from "../controllers/userCtrl.js";
 import { auth } from "../middlewares/auth.js";
 
 // import {getMyprofile} from '../controllers/userCtrl.js'
@@ -9,7 +9,7 @@ const router = express.Router();
 router.post("/get-authenticated-user", auth, getAuthenticatedUser);
 router.post("/get-logged-in-user", auth, getLoggedInUser);
 router.get('/get-publisher-courses/:publisherId',getPublisherCourses)
-
+router.get('/get-course/:courseId',getCourse)
 
 // // update profile
 // router.patch("/update", async (req, res) => {
@@ -31,7 +31,7 @@ router.get('/get-publisher-courses/:publisherId',getPublisherCourses)
 //     }
 //     let rollUser;
 //     if (user.role === "STUDENT") {
-//       rollUser = await StudentModel.findOne({ user_id: userId });
+//       rollUser = await StudentsModel.findOne({ user_id: userId });
 //     }
 //     if (user.role === "TEACHER") {
 //       rollUser = await TeacherModel.findOne({ user_id: userId });
@@ -141,7 +141,7 @@ router.get('/get-publisher-courses/:publisherId',getPublisherCourses)
 //     }
 //     let newRolledUser;
 //     if (role == "STUDENT") {
-//       newRolledUser = await StudentModel.create({
+//       newRolledUser = await StudentsModel.create({
 //         name,
 //         user_id: newUser._id,
 //         mobileNumber,

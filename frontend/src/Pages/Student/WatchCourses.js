@@ -1,33 +1,41 @@
 import React, { useEffect, useState } from "react";
 import { Card } from "react-bootstrap";
-import { useLocation } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import axios from "../../api/axios";
+import useAuth from "../../hooks/useAuth";
+import useLoggedIn from "../../hooks/useLoggedIn";
 
 const WatchCourses = () => {
-  const location = useLocation()
-  const publisherId = location.pathname.split("/")[2];
+  const { user } = useLoggedIn();
+  const { auth } = useAuth();
+  const { publisherId } = useParams();
+  const navigate = useNavigate();
   const [courses, setCourses] = useState();
-  const getMycourses = async (e) => {
+  const getStudentPurchasedCourse = async () => {
     try {
-      const res = await axios.get(`user/get-publisher-courses/${publisherId}`);
+      const studentId = user?._id;
+      const res = await axios.get(
+        `/student/get-purchased-courses/${studentId}`
+      );
       if (res.data.success) {
-        setCourses(res.data.data);
+        setCourses(res.data.data.enrolledIn);
       }
     } catch (error) {
       console.log(error);
     }
   };
   useEffect(() => {
-    getMycourses()
-  }, []);
-  return <section>
-    <div className="container">
+    getStudentPurchasedCourse();
+  }, [user, auth]);
+  return (
+    <section>
+      <div className="container">
         <div className="d-flex justify-content-between align-items-center">
           <div className="row col-12">
             {courses && courses.length > 0 ? (
               courses.map((course, idx) => (
                 <div className="col-12 col-md-4" key={idx}>
-                  <Card  className=" mx-1 my-3">
+                  <Card className=" mx-1 my-3">
                     <img
                       src={course?.thumbnail}
                       className="card-img-top"
@@ -40,10 +48,20 @@ const WatchCourses = () => {
                         </div>
                         <div className="h3 py-3">{course?.name}</div>
                       </Card.Title>
-                      <Card.Text>{course?.description}</Card.Text>
+                      <Card.Text>
+                        <div>{course?.description}</div>
+                        <div
+                          className="flex justify-end"
+                          onClick={() =>
+                            navigate(
+                              `/student/${publisherId}/see-courses/${course._id}`
+                            )
+                          }
+                        >
+                          <button className="btn-primary btn">Watch now</button>
+                        </div>
+                      </Card.Text>
                     </Card.Body>
-
-                   
                   </Card>
                 </div>
               ))
@@ -53,7 +71,8 @@ const WatchCourses = () => {
           </div>
         </div>
       </div>
-  </section>;
+    </section>
+  );
 };
 
 export default WatchCourses;
